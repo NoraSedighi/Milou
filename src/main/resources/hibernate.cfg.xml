@@ -1,0 +1,29 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/milou_db</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">ns200584</property>
+
+        <!-- JDBC connection pool (use built-in) -->
+        <property name="connection.pool_size">10</property>
+
+        <!-- SQL dialect -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+
+        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.format_sql">false</property>
+
+        <!-- Automatically create/drop tables based on entity mappings -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <mapping class="milou.Entity.User"/>
+        <mapping class="milou.Entity.Email"/>
+        <mapping class="milou.Entity.EmailRecipient"/>
+    </session-factory>
+</hibernate-configuration>
