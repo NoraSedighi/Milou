@@ -185,19 +185,19 @@ public class EmailService {
         }
     }
 
-
     private void showAllEmails(Session session) {
         var emails = session.createQuery("""
-                SELECT e.senderEmail, e.subject, e.code
-                FROM EmailRecipient r
-                JOIN Email e ON r.emailCode = e.code
-                WHERE r.recipientEmail = :email
-                ORDER BY e.sentAt DESC
-            """, Object[].class).setParameter("email", currentUser.getEmail()).list();
+            SELECT e.senderEmail, e.subject, e.code
+            FROM EmailRecipient r
+            JOIN Email e ON r.emailCode = e.code
+            WHERE r.recipientEmail = :email
+            ORDER BY e.sentAt ASC
+        """, Object[].class)
+                .setParameter("email", currentUser.getEmail()).list();
 
         System.out.println("All emails: ");
         for (Object[] row : emails) {
-            System.out.println("+" + row[0] + "-" + row[1] + "(" + row[2] + ")");
+            System.out.println("+ " + row[0] + " - " + row[1] + " (" + row[2] + ")");
         }
     }
 
@@ -207,6 +207,7 @@ public class EmailService {
                 FROM EmailRecipient r
                 JOIN Email e ON r.emailCode = e.code
                 WHERE r.recipientEmail = :email AND r.isRead = false
+                ORDER BY e.sentAT ASC
                 """, Object[].class)
                 .setParameter("email", currentUser.getEmail())
                 .list();
@@ -227,7 +228,8 @@ public class EmailService {
     }
 
     private void showSentEmails(Session session) {
-        List<Email> sentEmails = session.createQuery("FROM Email WHERE senderEmail = :email ORDER BY sentAt DESC", Email.class)
+        List<Email> sentEmails = session
+                .createQuery("FROM Email WHERE senderEmail = :email ORDER BY sentAt ASC", Email.class)
                 .setParameter("email", currentUser.getEmail())
                 .list();
 
@@ -236,34 +238,63 @@ public class EmailService {
         } else {
             System.out.println("Sent Emails:");
             for (Email email : sentEmails) {
-                System.out.println("+" + email.getSenderEmail() + " - " + email.getSubject() + " (" + email.getCode() + ")");
+                System.out.println("+ " + email.getSenderEmail() + " - " + email.getSubject() + " (" + email.getCode() + ")");
             }
         }
     }
 
-    public void readEmailByCode(Session session, Scanner scanner) {
+    private void readEmailByCode(Session session, Scanner scanner) {
         System.out.println("Enter email code: ");
         String code = scanner.nextLine().trim();
         String currentEmail = currentUser.getEmail();
 
-        EmailRecipient recipient = recipientDao.findByEmailCodeAndRecipientEmail(session, code, currentEmail);
+        Email email = emailDao.findByCode(session, code);
+        if (email == null) {
+            System.out.println("Email not found");
+            return;
+        }
 
-        if (recipient != null) {
-            Email email = recipient.getEmail();
+        List<EmailRecipient> recipients = recipientDao.findByEmailCode(session, code);
 
-            System.out.println("From: " + email.getSenderEmail());
-            System.out.println("Subject: " + email.getSubject());
-            System.out.println("Body:\n" + email.getBody());
-
-            if (!recipient.isRead()) {
-                Transaction tx = session.beginTransaction();
-                recipient.setRead(true);
-                session.update(recipient);
-                tx.commit();
+        boolean isRecipient = false;
+        for (EmailRecipient r : recipients) {
+            if (r.getRecipientEmail().equals(currentEmail)) {
+                isRecipient = true;
+                break;
             }
-        } else {
-            System.out.println("Email not found or you are not authorized to view it.");
+        }
+
+        boolean isSender = email.getSenderEmail().equals(currentEmail);
+
+        if (!isSender && !isRecipient) {
+            System.out.println("You cannot read this email.");
+            return;
+        }
+
+        System.out.println("Code: " + email.getCode());
+
+        StringBuilder recipientList = new StringBuilder();
+        for (int i = 0; i < recipients.size(); i++) {
+            recipientList.append(recipients.get(i).getRecipientEmail());
+            if (i < recipients.size() - 1) {
+                recipientList.append(", ");
+            }
+        }
+
+        System.out.println("Recipient(s): " + recipientList);
+        System.out.println("Subject: " + email.getSubject());
+        System.out.println("Date: " + email.getSentAt().toLocalDate());
+        System.out.println();
+        System.out.println(email.getBody());
+
+        for (EmailRecipient r : recipients) {
+            if (r.getRecipientEmail().equals(currentEmail) && !r.isRead()) {
+                Transaction tx = session.beginTransaction();
+                r.setRead(true);
+                session.update(r);
+                tx.commit();
+                break;
+            }
         }
     }
-
 }

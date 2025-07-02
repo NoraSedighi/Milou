@@ -26,4 +26,11 @@ public class EmailRecipientDao {
                 .setParameter("recipientEmail", recipientEmail)
                 .uniqueResult();
     }
+
+    public List<EmailRecipient> findByEmailCode(Session session, String code) {
+        return session.createQuery("FROM EmailRecipient WHERE email.code = :code", EmailRecipient.class)
+                .setParameter("code", code)
+                .list();
+    }
+
 }
