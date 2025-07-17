@@ -79,44 +79,57 @@ public class EmailService {
     }
 
     public void replyEmails(Session session, Scanner scanner) {
-        System.out.println("Enter the code of the email you want to reply to:");
+        System.out.println("Code: ");
         String code = scanner.nextLine().trim();
 
         EmailRecipient recipient = recipientDao.findByEmailCodeAndRecipientEmail(session, code, currentUser.getEmail());
-
         if (recipient == null) {
             System.out.println("Email not found or you are not authorized to reply.");
             return;
         }
 
         Email originalEmail = recipient.getEmail();
-
         if (originalEmail == null) {
             System.out.println("Original email not found.");
             return;
         }
 
-        System.out.println("Replying to: " + originalEmail.getSenderEmail());
-        System.out.println("Original Email Subject: " + originalEmail.getSubject());
         System.out.println("Body: ");
-        String body = scanner.nextLine();
+        String replyBody = scanner.nextLine();
 
-        String replySubject = "RE: " + originalEmail.getSubject();
-        String codeReply = CodeGenerator.generateCode();
+        String replySubject = "[Re] " + originalEmail.getSubject();
+        String replyCode = CodeGenerator.generateCode();
 
         Transaction tx = session.beginTransaction();
         try {
-            Email replyEmail = new Email(codeReply, currentUser.getEmail(), replySubject, body, LocalDateTime.now());
+            Email replyEmail = new Email(replyCode, currentUser.getEmail(), replySubject, replyBody, LocalDateTime.now());
             emailDao.save(session, replyEmail);
 
-            User recipientUser = userDao.findByEmail(session, originalEmail.getSenderEmail());
-            if (recipientUser != null) {
-                EmailRecipient replyRecipient = new EmailRecipient(replyEmail, recipientUser);
-                recipientDao.save(session, replyRecipient);
+            List<EmailRecipient> originalRecipients = recipientDao.findByEmailCode(session, code);
+
+            for (EmailRecipient r : originalRecipients) {
+                String recipientEmail = r.getRecipientEmail();
+                if (!recipientEmail.equals(currentUser.getEmail())) {
+                    User user = userDao.findByEmail(session, recipientEmail);
+                    if (user != null) {
+                        EmailRecipient replyRecipient = new EmailRecipient(replyEmail, user);
+                        recipientDao.save(session, replyRecipient);
+                    }
+                }
+            }
+
+            String originalSender = originalEmail.getSenderEmail();
+            if (!originalSender.equals(currentUser.getEmail())) {
+                User senderUser = userDao.findByEmail(session, originalSender);
+                if (senderUser != null) {
+                    EmailRecipient replyToSender = new EmailRecipient(replyEmail, senderUser);
+                    recipientDao.save(session, replyToSender);
+                }
             }
 
             tx.commit();
-            System.out.println("Reply sent successfully with code: " + codeReply);
+            System.out.println("Successfully sent your reply to email " + code + ".");
+            System.out.println("Code: " + replyCode);
         } catch (Exception e) {
             tx.rollback();
             System.out.println("Error while sending reply: " + e.getMessage());
