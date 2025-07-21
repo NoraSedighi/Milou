@@ -137,24 +137,22 @@ public class EmailService {
     }
 
     public void forwardEmails(Session session, Scanner scanner) {
-        System.out.println("Enter the code of the email you want to forward: ");
+        System.out.println("Code: ");
         String code = scanner.nextLine().trim();
 
         EmailRecipient recipient = recipientDao.findByEmailCodeAndRecipientEmail(session, code, currentUser.getEmail());
-
         if (recipient == null) {
             System.out.println("Email not found or you don't have access.");
             return;
         }
 
         Email originalEmail = recipient.getEmail();
-
         if (originalEmail == null) {
             System.out.println("Original email not found");
             return;
         }
 
-        System.out.println("Enter recipient(s) to forward to: ");
+        System.out.println("Recipient(s): ");
         String input = scanner.nextLine().trim();
         String[] forwardRecipients = input.split(",");
 
@@ -167,7 +165,7 @@ public class EmailService {
             forwardBody = additionalBody + "\n\n--- Forwarded message ---\n" + originalEmail.getBody();
         }
 
-        String forwardSubject = "FWD: " + originalEmail.getSubject();
+        String forwardSubject = "[Fw] " + originalEmail.getSubject();
         String forwardCode = CodeGenerator.generateCode();
 
         Transaction tx = session.beginTransaction();
@@ -191,7 +189,8 @@ public class EmailService {
             }
 
             tx.commit();
-            System.out.println("Email forwarded successfully with code: " + forwardCode);
+            System.out.println("Successfully forwarded your email.");
+            System.out.println("Code: " + forwardCode);
         } catch (Exception e) {
             tx.rollback();
             System.out.println("Error while forwarding email: " + e.getMessage());
