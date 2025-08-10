@@ -309,4 +309,20 @@ public class EmailService {
             }
         }
     }
+
+    public EmailDao getEmailDao() {
+        return emailDao;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public EmailRecipientDao getRecipientDao() {
+        return recipientDao;
+    }
 }

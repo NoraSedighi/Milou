@@ -5,6 +5,7 @@ import milou.Entity.User;
 import milou.Util.HibernateUtil;
 import org.hibernate.Session;
 
+import javax.sound.midi.SysexMessage;
 import java.util.List;
 import java.util.Scanner;
 
@@ -142,4 +143,49 @@ public class AuthorizationService {
             default -> System.out.println("Invalid option! Please try again");
         }
     }
+
+    public static boolean register(String name, String email, String password) {
+        if (!email.contains("@milou.com")) {
+            email = email.concat("@milou.com");
+        }
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            // Email already exists
+            if (userDao.findByEmail(session, email) != null) {
+                session.getTransaction().rollback();
+                return false;
+            }
+
+            User newUser = new User(name, email, password);
+            userDao.save(session, newUser);
+            session.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            System.out.println("An error occurred during registration.");
+            return false;
+        }
+    }
+
+    public static void setCurrentUser(User user) {
+        currentUser = user;
+    }
+
+    public static void setEmailService(User user) {
+        emailService = new EmailService(user);
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    public static EmailService getEmailService() {
+        return emailService;
+    }
+
+    public static UserDao getUserDao() {
+        return userDao;
+    }
+
 }
