@@ -132,7 +132,12 @@ public class MainFrame extends JFrame {
     }
 
     public void showReplyEmailPanel() {
-        hideAllPanels();
         ReplyEmailPanel replyEmailPanel = new ReplyEmailPanel(this);
+        replyEmailPanel.setVisible(true);
+    }
+
+    public void showForwardEmailPanel() {
+        ForwardEmailPanel forwardEmailPanel = new ForwardEmailPanel(this);
+        forwardEmailPanel.setVisible(true);
     }
 }

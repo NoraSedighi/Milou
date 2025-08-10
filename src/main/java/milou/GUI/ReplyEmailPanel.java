@@ -21,7 +21,7 @@ public class ReplyEmailPanel extends JDialog {
         super(mainFrame, "Reply to Email", true);
         this.mainFrame = mainFrame;
         setLayout(null);
-        setSize(500, 400);
+        setSize(600, 700);
         setLocationRelativeTo(mainFrame);
         getContentPane().setBackground(new Color(200, 250, 180));
 
@@ -63,53 +63,53 @@ public class ReplyEmailPanel extends JDialog {
     private void buildReplyPanel(Email originalEmail, String code) {
         JLabel title = new JLabel("Reply to Email");
         title.setFont(new Font("Arial", Font.BOLD, 22));
-        title.setBounds(180, 10, 200, 30);
+        title.setBounds(220, 30, 200, 30);
         add(title);
 
         JLabel codeLabel = new JLabel("Code:");
-        codeLabel.setBounds(50, 50, 100, 25);
+        codeLabel.setBounds(80, 80, 100, 25);
         add(codeLabel);
 
         JTextField codeField = new JTextField(code);
         codeField.setEditable(false);
-        codeField.setBounds(150, 50, 300, 25);
+        codeField.setBounds(180, 80, 340, 25);
         add(codeField);
 
         JLabel subjectLabel = new JLabel("Subject:");
-        subjectLabel.setBounds(50, 90, 100, 25);
+        subjectLabel.setBounds(80, 120, 100, 25);
         add(subjectLabel);
 
         JTextField subjectField = new JTextField("[Re] " + originalEmail.getSubject());
         subjectField.setEditable(false);
-        subjectField.setBounds(150, 90, 300, 25);
+        subjectField.setBounds(180, 120, 340, 25);
         add(subjectField);
 
         JLabel recipientsLabel = new JLabel("Recipient(s):");
-        recipientsLabel.setBounds(50, 130, 100, 25);
+        recipientsLabel.setBounds(80, 160, 100, 25);
         add(recipientsLabel);
 
         JTextField recipientsField = new JTextField(getRecipientsString(originalEmail.getCode()));
         recipientsField.setEditable(false);
-        recipientsField.setBounds(150, 130, 300, 25);
+        recipientsField.setBounds(180, 160, 340, 25);
         add(recipientsField);
 
         JLabel bodyLabel = new JLabel("Body:");
-        bodyLabel.setBounds(50, 170, 100, 25);
+        bodyLabel.setBounds(80, 200, 100, 25);
         add(bodyLabel);
 
         JTextArea bodyArea = new JTextArea();
         bodyArea.setLineWrap(true);
         JScrollPane bodyScroll = new JScrollPane(bodyArea);
-        bodyScroll.setBounds(150, 170, 300, 120);
+        bodyScroll.setBounds(180, 200, 340, 300);
         add(bodyScroll);
 
         JButton sendBtn = new JButton("Send Reply");
-        sendBtn.setBounds(150, 310, 120, 35);
+        sendBtn.setBounds(180, 550, 120, 35);
         sendBtn.setFocusable(false);
         add(sendBtn);
 
         JButton cancelBtn = new JButton("Cancel");
-        cancelBtn.setBounds(280, 310, 120, 35);
+        cancelBtn.setBounds(310, 550, 120, 35);
         cancelBtn.setFocusable(false);
         add(cancelBtn);
 

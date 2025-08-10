@@ -77,6 +77,8 @@ public class DashboardPanel extends JPanel {
 
         replyBtn.addActionListener(e -> mainFrame.showReplyEmailPanel());
 
+        forwardBtn.addActionListener(e -> mainFrame.showForwardEmailPanel());
+
         // TODO : set the rest of the buttons on action
 
         showUnreadEmails();
