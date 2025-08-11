@@ -3,6 +3,7 @@ package milou.Entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "emails")
@@ -80,6 +81,13 @@ public class Email {
 
     public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
+    }
+
+    @OneToMany(mappedBy = "email", fetch = FetchType.LAZY)
+    private List<EmailRecipient> recipients;
+
+    public List<EmailRecipient> getRecipients() {
+        return recipients;
     }
 
     @Override

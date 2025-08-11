@@ -25,4 +25,12 @@ public class EmailDao {
                 .setParameter("senderEmail", senderEmail)
                 .getResultList();
     }
+
+    public Email findByCodeWithRecipients(Session session, String code) {
+        return session.createQuery(
+                        "SELECT e FROM Email e LEFT JOIN FETCH e.recipients WHERE e.code = :code", Email.class)
+                .setParameter("code", code)
+                .uniqueResult();
+    }
+
 }

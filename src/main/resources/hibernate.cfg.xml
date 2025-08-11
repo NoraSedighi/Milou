@@ -1,7 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-configuration PUBLIC
-        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "-//Hibernate/Hibernate Configuration DTD//EN"
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
-
 <hibernate-configuration>
     <session-factory>
         <!-- Database connection settings -->
@@ -14,7 +14,7 @@
         <property name="connection.pool_size">10</property>
 
         <!-- SQL dialect -->
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <!-- <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property> -->
 
         <property name="hibernate.show_sql">false</property>
         <property name="hibernate.format_sql">false</property>
