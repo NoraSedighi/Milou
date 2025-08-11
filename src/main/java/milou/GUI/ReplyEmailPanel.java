@@ -25,6 +25,10 @@ public class ReplyEmailPanel extends JDialog {
         setLocationRelativeTo(mainFrame);
         getContentPane().setBackground(new Color(200, 250, 180));
 
+        inputCode();
+    }
+
+    private void inputCode() {
         String code = JOptionPane.showInputDialog(mainFrame, "Enter the email code to reply:", "Reply Code", JOptionPane.PLAIN_MESSAGE);
 
         if (code == null || code.trim().isEmpty()) {
