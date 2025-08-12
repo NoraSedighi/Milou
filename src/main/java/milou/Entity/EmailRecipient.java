@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class EmailRecipient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Basic(optional = false)
     @Column(name = "email_code")
