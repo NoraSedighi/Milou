@@ -10,7 +10,7 @@ import java.util.List;
 public class Email {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Basic(optional = false)
     @Column(name = "code", unique = true)
