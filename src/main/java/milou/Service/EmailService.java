@@ -43,18 +43,18 @@ public class EmailService {
             emailDao.save(session, email);
 
             for (String r : recipients) {
-                String emailAddrress = r.trim();
-                if (!emailAddrress.contains("@milou.com")) {
-                    emailAddrress = emailAddrress.concat("@milou.com");
+                String emailAddress = r.trim();
+                if (!emailAddress.contains("@milou.com")) {
+                    emailAddress = emailAddress.concat("@milou.com");
                 }
 
-                User recipientUser = userDao.findByEmail(session, emailAddrress);
+                User recipientUser = userDao.findByEmail(session, emailAddress);
 
                 if (recipientUser != null) {
                     EmailRecipient recipient = new EmailRecipient(email, recipientUser);
                     recipientDao.save(session, recipient);
                 } else {
-                    System.out.println("User not found: " + emailAddrress);
+                    System.out.println("User not found: " + emailAddress);
                 }
             }
 
